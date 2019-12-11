@@ -1,9 +1,10 @@
-Train-Scheduler
-Table of Contents
-Objective
+## Train-Scheduler
+
+### Objective
+
 Create a train scheduler that tracks past & future trains on a minutely basis using a database.
 
-Technologies
+### Technologies
 Front-End
 
  HTML
@@ -13,7 +14,7 @@ Front-End
  JQuery
  Moment.js
  Firebase
-Setup
+### Setup
 1. git clone https://github.com/sgaio/Train-Scheduler/edit/master
 2. cd Train-Scheduler
 3. Open index.html in web browser
