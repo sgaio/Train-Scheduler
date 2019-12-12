@@ -1,87 +1,84 @@
 <!DOCTYPE html>
-<html lang="en-us">
-
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gaio's Train Schedule</title>
-  <link rel="stylesheet" type="text/css" href="assets/css/reset.css">
-  <link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/slate/bootstrap.min.css" rel="stylesheet" integrity="sha384-RpX8okQqCyUNG7PlOYNybyJXYTtGQH+7rIKiVvg1DLg6jahLEk47VvpUyS+E2/uJ" crossorigin="anonymous">
-  <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Train-Scheduler</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+      <link rel="stylesheet" href="assets/css/style.css">
+    
 </head>
-
 <body>
-  <div class="container">
-    <div class="jumbotron">
-      <h1 class="text-center" id="heading">Gaio's Train Schedule</h1>
-      <h2 class="text-center" id="subHeading">Always On Time</h2>
-      <p class="pull-right" id="currentTime"></p>
-    </div>
-
-    <div class="row">
-      <div class="col-xs-12 col-sm-9">
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h3 class="panel-title">Train Schedule</h3>
-          </div>
-          <div class="panel-body">
-            <table class="table table-hover" id="train-table">
-              <thead>
-                <tr>
-                  <th>Train Name</th>
-                  <th>Destination</th>
-                  <th class="text-center">Frequency</th>
-                  <th class="text-center">Next Arrival</th>
-                  <th class="text-center">Minutes Away</th>
-                  <th class="text-center">Remove</th>
-                </tr>
-              </thead>
-              <tbody id="train-table-rows">
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-xs-12 col-sm-3">
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h3 class="panel-title">Add New Train</h3>
-            <div>
-              <div class="panel-body">
-                <form>
-                  <div class="form-group">
-                    <label>Train Name</label>
-                    <input type="text" class="form-control form-field" id="train-name">
-                  </div>
-                  <div class="form-group">
-                    <label>Destination</label>
-                    <input type="text" class="form-control form-field" id="destination">
-                  </div>
-                  <div class="form-group">
-                    <label>First Train Time: HH:mm - military time</label>
-                    <input type="text" class="form-control form-field" id="first-train">
-                  </div>
-                  <div class="form-group">
-                    <label>Frequency (min)</label>
-                    <input type="text" class="form-control form-field" id="frequency">
-                  </div>
-
-                  <button type="submit" class="btn btn-default" id="submit">Add Train</button>
-                </form>
-              </div>
+    
+    <div class="container jumbotron bg-dark">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="all title">Gaio's Train Scheduler!</h1>
+                <h2 class="all directions">Fill Out The Form Below To Schedule Your Personal Trains!</h2>
             </div>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
 
-  <script src="https://www.gstatic.com/firebasejs/4.1.2/firebase.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js" integrity="sha256-1hjUhpc44NwiNg8OwMu2QzJXhD8kcj+sJA3aCQZoUjg=" crossorigin="anonymous"></script>
-  <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous">
-  </script>
-  <script type="text/javascript" src="assets/javascript/app.js"></script>
+    <table class="table table-striped table-dark container jumobtron">
+        <thead>
+          <tr>
+            <th scope="col">Train Name</th>
+            <th scope="col">Destination</th>
+            <th scope="col">Frequency (Minutes)</th>
+            <th scope="col">Next Arrival</th>
+            <th scope="col">Minutes Away</th>
+          </tr>
+        </thead>
+        <tbody id="main-holder">
+
+          </tbody>
+      </table>
+
+
+
+    <form class="table-dark container jumbotron bg-dark">
+      <div class="container">
+          <h1>Train Form</h1>
+          <h2 class="error">
+      </div>
+      
+        <div class="form-group container">
+          <label for="formGroupExampleInput">Train Name</label>
+          <input type="text" class="form-control" id="train-name-input" placeholder="Enter Train Name Here...">
+        </div>
+
+        <div class="form-group container">
+          <label for="formGroupExampleInput2">Destination</label>
+          <input type="text" class="form-control" id="destination-input" placeholder="Enter Destination Here...">
+        </div>
+
+        <div class="form-group container">
+            <label for="formGroupExampleInput">First Train Time (HH:mm)</label>
+            <input type="text" class="form-control" id="first-train-input" placeholder="Please Enter HH:mm ...">
+          </div>
+  
+          <div class="form-group container">
+            <label for="formGroupExampleInput2">Frequency (Mins)</label>
+            <input type="text" class="form-control" id="frequency-input" placeholder="Enter Minutes Here...">
+          </div>
+          <div class="container">
+          <button type="submit" class="btn btn-primary" id="submit-train">Submit</button>
+        </div>
+      </form>
+
+
+
+<script src="https://momentjs.com/downloads/moment.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/6.3.4/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/6.3.4/firebase-database.js"></script>
+<script type='text/javascript' src='assets/javascript/keys.js'></script>
+<script type='text/javascript' src='assets/javascript/app.js'></script>
+
 </body>
-
 </html>

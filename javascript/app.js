@@ -1,106 +1,91 @@
-var config = {
-    apiKey: 
-    authDomain: 
-    databaseURL: 
+var mykey = config.MY_KEY;
 
-  };
-  
-  firebase.initializeApp(config);
-  
-  var database = firebase.database();
-  
-  var trainName = "";
-  var destination = "";
-  var startTime = "";
-  var frequency = 0;
-  
-  function currentTime() {
-    var current = moment().format('LT');
-    $("#currentTime").html(current);
-    setTimeout(currentTime, 1000);
-  };
-  
-  $(".form-field").on("keyup", function() {
-    var traintemp = $("#train-name").val().trim();
-    var citytemp = $("#destination").val().trim();
-    var timetemp = $("#first-train").val().trim();
-    var freqtemp = $("#frequency").val().trim();
-  
-    sessionStorage.setItem("train", traintemp);
-    sessionStorage.setItem("city", citytemp);
-    sessionStorage.setItem("time", timetemp);
-    sessionStorage.setItem("freq", freqtemp);
-  });
-  
-  $("#train-name").val(sessionStorage.getItem("train"));
-  $("#destination").val(sessionStorage.getItem("city"));
-  $("#first-train").val(sessionStorage.getItem("time"));
-  $("#frequency").val(sessionStorage.getItem("freq"));
-  
-  $("#submit").on("click", function(event) {
-    event.preventDefault();
-  
-    if ($("#train-name").val().trim() === "" ||
-      $("#destination").val().trim() === "" ||
-      $("#first-train").val().trim() === "" ||
-      $("#frequency").val().trim() === "") {
-  
-      alert("Please fill in all details to add new train");
-  
-    } else {
-  
-      trainName = $("#train-name").val().trim();
-      destination = $("#destination").val().trim();
-      startTime = $("#first-train").val().trim();
-      frequency = $("#frequency").val().trim();
-  
-      $(".form-field").val("");
-  
-      database.ref().push({
-        trainName: trainName,
-        destination: destination,
-        frequency: frequency,
-        startTime: startTime,
-        dateAdded: firebase.database.ServerValue.TIMESTAMP
-      });
-  
-      sessionStorage.clear();
-    }
-  
-  });
-  
-  database.ref().on("child_added", function(childSnapshot) {
-    var startTimeConverted = moment(childSnapshot.val().startTime, "hh:mm").subtract(1, "years");
-    var timeDiff = moment().diff(moment(startTimeConverted), "minutes");
-    var timeRemain = timeDiff % childSnapshot.val().frequency;
-    var minToArrival = childSnapshot.val().frequency - timeRemain;
-    var nextTrain = moment().add(minToArrival, "minutes");
-    var key = childSnapshot.key;
-  
-    var newrow = $("<tr>");
-    newrow.append($("<td>" + childSnapshot.val().trainName + "</td>"));
-    newrow.append($("<td>" + childSnapshot.val().destination + "</td>"));
-    newrow.append($("<td class='text-center'>" + childSnapshot.val().frequency + "</td>"));
-    newrow.append($("<td class='text-center'>" + moment(nextTrain).format("LT") + "</td>"));
-    newrow.append($("<td class='text-center'>" + minToArrival + "</td>"));
-    newrow.append($("<td class='text-center'><button class='arrival btn btn-danger btn-xs' data-key='" + key + "'>X</button></td>"));
-  
-    if (minToArrival < 6) {
-      newrow.addClass("info");
-    }
-  
-    $("#train-table-rows").append(newrow);
-  
-  });
-  
-  $(document).on("click", ".arrival", function() {
-    keyref = $(this).attr("data-key");
-    database.ref().child(keyref).remove();
-    window.location.reload();
-  });
-  
-  currentTime();
-  
-  setInterval(function() {
-    window.location.reload();
-  }, 60000);
+var firebaseConfig = {
+  apiKey: MY_KEY,
+  authDomain: "train-schedule-8499d.web.app",
+  databaseURL: "https:train-schedule-8499d.firebaseapp.com",
+  projectId: "train-schedule-8499d",
+  storageBucket: "https:train-schedule-8499d.web.app/",
+  messagingSenderId: "",
+  appId: "project-257037886748",
+};
+
+firebase.initializeApp(firebaseConfig);
+
+// Created a shortcut for firebase.database()
+let database = firebase.database()
+
+// Declared variables that are empty & will be given values upon the click functions
+let name = ""
+let destination = ""
+let firstTrainTime = ""
+let frequency = ""
+
+// Will extract the values from the form and check to see if they are valid
+$("#submit-train").on("click", function (event) {
+
+  event.preventDefault();
+  name = $("#train-name-input").val().trim()
+  destination = $("#destination-input").val().trim()
+  firstTrainTime = $("#first-train-input").val().trim()
+  frequency = $("#frequency-input").val().trim()
+
+  if (name.length < 1 || destination.length < 1 || firstTrainTime.length !== 5 || frequency.length < 1) {
+    $(".error").empty()
+    $(".error").append("**You Must Insert Valid Fields**")
+    return;
+  }
+  else {
+
+    // Push my created object into the database if it passes the validation and formats the time
+    firstTrainTime = moment(firstTrainTime, "HH:mm").format("x");
+    database.ref("/New-Train").push({
+      name,
+      destination,
+      firstTrainTime,
+      frequency
+    })
+
+    $("#train-name-input").val("")
+    $("#destination-input").val("")
+    $("#first-train-input").val("")
+    $("#frequency-input").val("")
+    $(".error").empty()
+  }
+
+})
+
+// Whenever page is loaded or another object is added, run the calculations
+database.ref("/New-Train").on("child_added", function (snapshot) {
+
+  let name = snapshot.val().name
+  let destination = snapshot.val().destination
+  let frequency = snapshot.val().frequency
+  let firstTrainTime = moment(snapshot.val().firstTrainTime, 'x')
+
+  let arrival, minutes;
+
+  // Checks to see if the train is in the future or in the past
+  if(moment().isBefore(firstTrainTime)){
+    arrival = firstTrainTime.format("HH:mm a");
+    minutes = firstTrainTime.diff(moment(), 'minutes') + 1
+  } else {
+    let remainder = Math.abs(moment().diff(firstTrainTime, 'minutes')) % frequency;
+    minutes = frequency - remainder;
+    arrival = moment().add(minutes, "minutes").format("hh:mm a")
+  }
+
+
+  // let remainder = moment().diff(moment(firstTrainTime,"X"), "minutes") % frequency;  
+  // let minutes = frequency - remainder;
+  // let arrival = moment().add(minutes, "minutes").format("hh:mm A");
+
+
+
+  // Dynamically generates content based on what is in firebase & after calculations
+  let newTr = $("<tr>")
+  newTr.html(`<td>${name}</td><td>${destination}</td><td>${frequency}</td><td>${arrival}</td><td>${minutes}</td>`)
+
+  $("#main-holder").append(newTr)
+
+})
