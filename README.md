@@ -15,6 +15,6 @@ Front-End
  Moment.js
  Firebase
 ### Setup
-1. git clone https://github.com/sgaio/Train-Scheduler/edit/master
+1. git clone https://github.com/sgaio/Train-Scheduler
 2. cd Train-Scheduler
 3. Open index.html in web browser
